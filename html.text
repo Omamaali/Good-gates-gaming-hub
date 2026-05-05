@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GoodGate Play Hub 🌍</title>
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+background:#0b1220;
+color:white;
+margin:0;
+}
+
+header{
+background:#111827;
+padding:20px;
+}
+
+.game-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+gap:12px;
+padding:20px;
+}
+
+.card{
+background:#1f2937;
+padding:15px;
+border-radius:12px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.card:hover{
+background:#374151;
+transform:scale(1.05);
+}
+
+#yuya{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#facc15;
+padding:15px;
+border-radius:50%;
+cursor:pointer;
+}
+
+#box{
+position:fixed;
+bottom:80px;
+right:20px;
+background:white;
+color:black;
+padding:15px;
+border-radius:10px;
+width:250px;
+display:none;
+}
+button{
+padding:10px;
+margin:5px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+input{
+padding:10px;
+border-radius:8px;
+border:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>🎮 GoodGate Play Hub</h2>
+🌍 Global Game Experience
+<br>
+🔥 Score: <span id="points">0</span>
+</header>
+
+<div class="game-grid">
+<div class="card" onclick="quiz()">🧠 Quiz</div>
+<div class="card" onclick="memory()">🧩 Memory</div>
+<div class="card" onclick="hiero()">🏺 Hiero Quest</div>
+<div class="card" onclick="rock()">✊ Rock Game</div>
+<div class="card" onclick="typeGame()">⌨ Typing</div>
+</div>
+
+<div id="hiero"></div>
+<div id="quiz"></div>
+<div id="memory"></div>
+
+<!-- Yuya -->
+<div id="box">
+<p id="talk">Hello Explorer 🌍</p>
+</div>
+<div id="yuya" onclick="Yuya.toggle()">🤖</div>
+
+<script>
+
+/* ================= SCORE ================= */
+let points = localStorage.getItem("p") || 0;
+document.getElementById("points").innerText = points;
+
+function add(x){
+points = parseInt(points) + x;
+localStorage.setItem("p", points);
+document.getElementById("points").innerText = points;
+Yuya.react(points);
+}
+
+/* ================= YUYA GLOBAL ================= */
+const Yuya = {
+talk: function(msg){
+document.getElementById("box").style.display="block";
+document.getElementById("talk").innerText = msg;
+},
+
+toggle: function(){
+let b=document.getElementById("box");
+b.style.display = (b.style.display=="block")?"none":"block";
+},
+
+react: function(p){
+if(p > 300){
+this.talk("🏆 Legendary Player!");
+}else if(p > 150){
+this.talk("🔥 Great progress!");
+}else{
+this.talk("Keep exploring 🌍");
+}
+}
+};
+
+setTimeout(()=>Yuya.talk("Welcome to GoodGate Global 🌍"),1200);
+
+/* ================= QUIZ ================= */
+function quiz(){
+clear();
+let q="Is learning fun?";
+let correct=true;
+
+document.getElementById("quiz").innerHTML=`
+<h3>${q}</h3>
+<button onclick="checkQuiz(true)">Yes</button>
+<button onclick="checkQuiz(false)">No</button>
+`;
+}
+
+function checkQuiz(a){
+if(a){
+add(100);
+Yuya.talk("Correct 🎉 +100");
+}else{
+Yuya.talk("Try again ❌");
+}
+clear();
+}
+
+/* ================= MEMORY ================= */
+function memory(){
+clear();
+add(50);
+Yuya.talk("Memory Mode Activated 🧩");
+}
+
+/* ================= HIERO QUEST ================= */
+let word="";
+
+function hiero(){
+clear();
+
+let words=["SUN","KING","WATER","LOVE","POWER"];
+word = words[Math.floor(Math.random()*words.length)];
+
+let map={
+S:"𓋴",H:"𓉔",A:"𓄿",N:"𓈖",
+K:"𓎡",I:"𓇋",R:"𓂋",
+W:"𓅱",O:"𓅱",E:"𓇌"
+};
+
+let h="";
+for(let c of word){
+h+=map[c]||"𓂀";
+}
+
+document.getElementById("hiero").innerHTML=`
+<h3>🏺 Hiero Quest</h3>
+<p>Guess the word:</p>
+<div style="font-size:40px">${h}</div>
+<input id="g">
+<button onclick="check()">Check</button>
+<p id="res"></p>
+`;
+}
+
+function check(){
+let g=document.getElementById("g").value.toUpperCase();
+
+if(g==word){
+add(150);
+Yuya.talk("🏺 Ancient Master!");
+document.getElementById("res").innerText="Correct!";
+}else{
+Yuya.talk("Try again explorer 🌍");
+}
+}
+
+/* ================= OTHER ================= */
+function rock(){
+clear();
+add(30);
+Yuya.talk("✊ Rock Mode");
+}
+
+function typeGame(){
+clear();
+let t="goodgate";
+let i=prompt("Type: "+t);
+
+if(i==t){
+add(120);
+Yuya.talk("⚡ Fast!");
+}else{
+Yuya.talk("Try again");
+}
+}
+
+/* ================= UTIL ================= */
+function clear(){
+document.getElementById("quiz").innerHTML="";
+document.getElementById("memory").innerHTML="";
+document.getElementById("hiero").innerHTML="";
+}
+
+</script>
+
+</body>
+</html>
